@@ -10,18 +10,12 @@ addons:
     - libxml2-dev
     - libjson-c-dev
     - libgeoip-dev
-language: c
-compiler:
-  - clang
-  - gcc
-install: ./autogen.sh
+  sonarcloud:
+    organization: "dns-oarc"
+    token:
+      secure: "gq8YBKMnrS3w6TOetgXPUX7Go0uiGRAPAF+slyir8IxAdHlzEYAkE3kwUToeTee5xR1zE9XZgZKDLAHgLJjBrCYdnUOEmHZkDyxUFhf2Btcu6O84SjowEiZmVsRDyxrWpxXwszP/tPnE9H4i+MbrKQ0ysJNpqBP2GrEdRwz7c7rNZx7IeVKkUGuWGnKu/Lm5yE3Hv0aWN5qCK0ieUc2jgzLL33rLYxs1bIq0cc9ERvjeNPEZFnuaHlcmTZT0M/29d7m8si1H0/VxMPT1mC1OuvZGQHce8TMmXwJRw79aQajUBKTZNb1sfOJS8NHFQce7mXpgwpG1WH3knKeptf6OhZC4XaSqdUk8zsLXkVuGkfgI5D3ugvzHGHopAn5bq2atFm5yGJtR3Z0KyB9mfcbhFDC53Hpj++oAwyRgXyzL9i/ha3aYxJ21utfGqGFF/WR4pCr+4X570vVFev40NqEGD8YLlfnea0JfwF+S9tqj29rVen2zDbnLBmpWCtrHxm2JCd2GDsT1uonI1riCh0OM+GmxfFK1JaZvD3+btdqCbolFkoRJwkcsknGK+YHyxSWLTZKl3kS5IWngYFk5tbceHeItEPdR1CJ28NlpbRGiqKqKI3PGC8szLnIE9Zl0f0bUT1Nztv+uL5aNh454mHUnBbcF/gYvtwMZCbqK0b6HkWY="
 script:
+  - ./autogen.sh
   - ./configure --enable-warn-all
-  - make dist
-  - tar zxvf *.tar.gz
-  - cd dnsperf-[0-9]*
-  - mkdir build
-  - cd build
-  - ../configure --enable-warn-all
-  - make
-  - make test
+  - build-wrapper-linux-x86-64 --out-dir bw-output make clean all
+  - sonar-scanner

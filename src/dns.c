@@ -144,6 +144,20 @@ perf_result_t perf_dname_fromstring(const char* str, size_t len, perf_buffer_t* 
 
 perf_result_t perf_qtype_fromstring(const char* str, size_t len, perf_buffer_t* target)
 {
+#ifdef HAVE_LDNS
+    char *s = strndup(str, len); // should be cheap
+    uint16_t t = 0;
+    if (s) {
+        t = ldns_get_rr_type_by_name(str);
+        free(s);
+    }
+    if (t) {
+        perf_buffer_putuint16(target, t);
+        return PERF_R_SUCCESS;
+    } else {
+        return PERF_R_FAILURE;
+    }
+#else
     const perf_qtype_t* q = qtype_table;
 
     while (q->type) {
@@ -155,6 +169,7 @@ perf_result_t perf_qtype_fromstring(const char* str, size_t len, perf_buffer_t* 
     }
 
     return PERF_R_FAILURE;
+#endif
 }
 
 static perf_result_t build_query(const perf_region_t* line, perf_buffer_t* msg)
